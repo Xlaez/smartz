@@ -10,19 +10,28 @@ import "../src/interfaces/IERC6551Registry.sol";
 import {IAccountProxy} from "../src/interfaces/IImplementation.sol";
 
 contract CounterScript is Script {
+    // constructor() {
+    //     _transferOwnership(msg.sender);
+    // }
+
     function setUp() public {}
 
     function run() public {
-        uint256 privateKey = vm.envUint("PRIVATE_KEY");
+        string memory privateKeyStr = vm.envString("PRIVATE_KEY");
+        uint256 privateKey = vm.parseUint(privateKeyStr);
+
         vm.startBroadcast(privateKey);
 
+        address deployer = vm.addr(privateKey);
+
         // Deploy marketplace contract
-        MarketPlace marketplace = new MarketPlace(payable(msg.sender));
+        MarketPlace marketplace = new MarketPlace(payable(deployer));
         console.log("Marketplace deployed at:", address(marketplace));
 
+        console.log("Deploying from:", deployer);
         // Deploy NFT contract
         MarketPlaceItemNft nft = new MarketPlaceItemNft(
-            msg.sender,
+            deployer,
             "SmartzNFT",
             "SNFT"
         );
