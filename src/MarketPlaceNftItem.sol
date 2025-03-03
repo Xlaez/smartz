@@ -7,11 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract MarketPlaceItemNft is ERC721, Ownable {
     uint256 private _nextTokenId;
 
-    constructor(
-        address creator,
-        string memory _name,
-        string memory _symbol
-    ) ERC721(_name, _symbol) Ownable(creator) {
+    constructor(address creator, string memory _name, string memory _symbol) ERC721(_name, _symbol) Ownable(creator) {
         _nextTokenId = 0;
         safeMint(creator);
     }

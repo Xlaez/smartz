@@ -36,13 +36,7 @@ contract MarketPlaceTest is Test {
 
         string memory tokenURI = "https://example.com/token/1";
 
-        marketPlace.listItemForSale(
-            "Test NFT",
-            nftPrice,
-            tokenURI,
-            "Test NFT description",
-            1
-        );
+        marketPlace.listItemForSale("Test NFT", nftPrice, tokenURI, "Test NFT description", 1);
 
         vm.stopPrank();
 
@@ -73,19 +67,12 @@ contract MarketPlaceTest is Test {
 
         string memory tokenURI = "https://example.com/token/1";
 
-        marketPlace.listItemForSale(
-            "Test NFT",
-            nftPrice,
-            tokenURI,
-            "Test NFT Description",
-            1
-        );
+        marketPlace.listItemForSale("Test NFT", nftPrice, tokenURI, "Test NFT Description", 1);
 
         vm.stopPrank();
 
         // Fetch all market items
-        MarketPlace.MarketPlaceItem[] memory items = marketPlace
-            .fetchMarketItems();
+        MarketPlace.MarketPlaceItem[] memory items = marketPlace.fetchMarketItems();
 
         // Verify results
         assertEq(items.length, 1);
@@ -97,20 +84,12 @@ contract MarketPlaceTest is Test {
         // First list an item
         vm.startPrank(seller);
 
-        marketPlace.listItemForSale(
-            "Test NFT",
-            nftPrice,
-            "https://example.com/token/1",
-            "Test NFT Description",
-            1
-        );
+        marketPlace.listItemForSale("Test NFT", nftPrice, "https://example.com/token/1", "Test NFT Description", 1);
 
         vm.stopPrank();
 
         // Fetch the specific market item
-        MarketPlace.MarketPlaceItem memory item = marketPlace.fetchMarketItem(
-            1
-        );
+        MarketPlace.MarketPlaceItem memory item = marketPlace.fetchMarketItem(1);
 
         // Verify results
         assertEq(item.itemId, 1);

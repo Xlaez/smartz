@@ -49,83 +49,53 @@ contract Profile is EIP712 {
         creatorIdCount = 0;
     }
 
-    function onboardCreator(
-        address creator,
-        string memory username,
-        string memory img
-    ) public returns (string memory _name, uint16 _id) {
+    function onboardCreator(address creator, string memory username, string memory img)
+        public
+        returns (string memory _name, uint16 _id)
+    {
         require(creator == msg.sender, "Not Authorized");
-        require(
-            isCreator[creator] == false,
-            "Cannot onboard the same creator twice"
-        );
+        require(isCreator[creator] == false, "Cannot onboard the same creator twice");
         creatorIdCount += 1;
 
         _name = username;
 
         _id = creatorIdCount;
 
-        CreatorProfileDetails memory profileDetails = CreatorProfileDetails(
-            _name,
-            img,
-            "creator",
-            creatorIdCount,
-            msg.sender,
-            block.timestamp,
-            0,
-            0
-        );
+        CreatorProfileDetails memory profileDetails =
+            CreatorProfileDetails(_name, img, "creator", creatorIdCount, msg.sender, block.timestamp, 0, 0);
 
         allCreatorProfiles[creatorIdCount] = profileDetails;
         isCreator[creator] = true;
         emit CreatorProfileCreated(creator);
     }
 
-    function onboardCollector(
-        address collector,
-        string memory username,
-        string memory img
-    ) public returns (string memory _name, uint16 _id) {
+    function onboardCollector(address collector, string memory username, string memory img)
+        public
+        returns (string memory _name, uint16 _id)
+    {
         require(collector == msg.sender, "Not Authorized");
 
-        require(
-            isCollector[collector] == false,
-            "Cannot onboard the same collector twice"
-        );
+        require(isCollector[collector] == false, "Cannot onboard the same collector twice");
         collectorIdCount += 1;
 
         _name = username;
         _id = collectorIdCount;
 
-        CollectorProfileDetails memory profileDetails = CollectorProfileDetails(
-            _name,
-            img,
-            "collector",
-            collectorIdCount,
-            msg.sender,
-            block.timestamp,
-            0
-        );
+        CollectorProfileDetails memory profileDetails =
+            CollectorProfileDetails(_name, img, "collector", collectorIdCount, msg.sender, block.timestamp, 0);
 
         allCollectorProfiles[collectorIdCount] = profileDetails;
         isCollector[collector] = true;
         emit CollectorProfileCreated(collector);
     }
 
-    function fetchCreatorProfile(
-        uint16 _id
-    ) public view returns (CreatorProfileDetails memory) {
+    function fetchCreatorProfile(uint16 _id) public view returns (CreatorProfileDetails memory) {
         require(_id > 0 && _id <= creatorIdCount, "Creator profile not found");
         return allCreatorProfiles[_id];
     }
 
-    function fetchCollectorProfile(
-        uint16 _id
-    ) public view returns (CollectorProfileDetails memory) {
-        require(
-            _id > 0 && _id <= collectorIdCount,
-            "Collector profile not found"
-        );
+    function fetchCollectorProfile(uint16 _id) public view returns (CollectorProfileDetails memory) {
+        require(_id > 0 && _id <= collectorIdCount, "Collector profile not found");
         return allCollectorProfiles[_id];
     }
 
@@ -153,14 +123,8 @@ contract Profile is EIP712 {
         emit CreatorProfileUpdated(msg.sender);
     }
 
-    function fetchAllCreators()
-        public
-        view
-        returns (CreatorProfileDetails[] memory)
-    {
-        CreatorProfileDetails[] memory profiles = new CreatorProfileDetails[](
-            creatorIdCount
-        );
+    function fetchAllCreators() public view returns (CreatorProfileDetails[] memory) {
+        CreatorProfileDetails[] memory profiles = new CreatorProfileDetails[](creatorIdCount);
 
         for (uint16 i = 1; i <= creatorIdCount; i++) {
             profiles[i - 1] = allCreatorProfiles[i];

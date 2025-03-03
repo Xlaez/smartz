@@ -29,7 +29,9 @@ contract MarketPlace is ERC721URIStorage, ReentrancyGuard, IERC721Receiver {
 
     mapping(uint256 => MarketPlaceItem) public idToMarketPlaceItem;
 
-    /** Events */
+    /**
+     * Events
+     */
     event MarketPlaceItemCreated(
         uint256 indexed itemId,
         address indexed nftContract,
@@ -61,12 +63,11 @@ contract MarketPlace is ERC721URIStorage, ReentrancyGuard, IERC721Receiver {
     }
 
     // Implement onERC721Received to make the contract capable of receiving ERC721 tokens
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId,
-        bytes calldata data
-    ) external override returns (bytes4) {
+    function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data)
+        external
+        override
+        returns (bytes4)
+    {
         return this.onERC721Received.selector;
     }
 
@@ -104,16 +105,7 @@ contract MarketPlace is ERC721URIStorage, ReentrancyGuard, IERC721Receiver {
         _transfer(msg.sender, address(this), newTokenId);
 
         emit MarketPlaceItemCreated(
-            itemId,
-            address(this),
-            newTokenId,
-            name,
-            msg.sender,
-            price,
-            block.timestamp,
-            description,
-            true,
-            creatorId
+            itemId, address(this), newTokenId, name, msg.sender, price, block.timestamp, description, true, creatorId
         );
     }
 
@@ -122,16 +114,12 @@ contract MarketPlace is ERC721URIStorage, ReentrancyGuard, IERC721Receiver {
         uint256 unsoldItemsCount = itemIds - itemsSold;
         uint256 currentIndex = 0;
 
-        MarketPlaceItem[] memory items = new MarketPlaceItem[](
-            unsoldItemsCount
-        );
+        MarketPlaceItem[] memory items = new MarketPlaceItem[](unsoldItemsCount);
 
         for (uint256 i = 0; i < itemCount; i++) {
             if (idToMarketPlaceItem[i + 1].isForSale == true) {
                 uint256 currentId = idToMarketPlaceItem[i + 1].itemId;
-                MarketPlaceItem storage currentItem = idToMarketPlaceItem[
-                    currentId
-                ];
+                MarketPlaceItem storage currentItem = idToMarketPlaceItem[currentId];
                 items[currentIndex] = currentItem;
                 currentIndex++;
             }
@@ -143,17 +131,11 @@ contract MarketPlace is ERC721URIStorage, ReentrancyGuard, IERC721Receiver {
     function purchaseItem(uint256 itemId) public payable nonReentrant {
         MarketPlaceItem storage item = idToMarketPlaceItem[itemId];
 
-        require(
-            msg.value >= item.price,
-            "Not enough funds to purchase this NFT"
-        );
+        require(msg.value >= item.price, "Not enough funds to purchase this NFT");
 
-        require(
-            msg.sender != item.seller,
-            "Seller cannot purchase their own NFT"
-        );
+        require(msg.sender != item.seller, "Seller cannot purchase their own NFT");
 
-        (bool success, ) = item.seller.call{value: item.price}("");
+        (bool success,) = item.seller.call{value: item.price}("");
         require(success, "Transfer to creator failed");
 
         _transfer(address(this), msg.sender, item.tokenId);
@@ -176,9 +158,7 @@ contract MarketPlace is ERC721URIStorage, ReentrancyGuard, IERC721Receiver {
         );
     }
 
-    function fetchMarketItem(
-        uint256 itemId
-    ) public view returns (MarketPlaceItem memory) {
+    function fetchMarketItem(uint256 itemId) public view returns (MarketPlaceItem memory) {
         require(itemId > 0 && itemId <= itemIds, "NFT not found");
 
         return idToMarketPlaceItem[itemId];
